@@ -1972,7 +1972,7 @@ function drawCop(x, y, idx){
   var bubble = (G.fineShow>0 && G.fineCross===idx);
   var spr = NPCIMG.cop;
   if(spr){
-    var h = 42, w = Math.round(h*spr.width/spr.height);
+    var h = 44, w = Math.round(h*spr.width/spr.height);
     ctx.drawImage(spr, x-Math.round(w/2), y-h, w, h);
     var bounce = Math.round(Math.sin(G.t*10)*1.5);
     if(bubble){
@@ -2315,16 +2315,16 @@ function loadOfficeBg2(){
   var img = new Image();
   img.onload = function(){
     try{
+      // ps/office3_ps.png 已离线完成裁切与预缩小(480x270)，这里直接 1:1 使用
       var c = document.createElement('canvas');
       c.width = 480; c.height = 270;
       var g = c.getContext('2d');
-      g.imageSmoothingEnabled = true;
-      g.imageSmoothingQuality = 'high';
-      g.drawImage(img, 0, 260, 1254, 705, 0, 0, 480, 270);
+      g.imageSmoothingEnabled = false;
+      g.drawImage(img, 0, 0);
       L2BG.cvs = c; L2BG.ready = true;
     }catch(e){}
   };
-  img.src = 'office3.png';
+  img.src = 'ps/office3_ps.png';
 }
 
 /* ---------------- 角色精灵（设定图裁切） ---------------- */
@@ -2485,18 +2485,23 @@ function trimCanvas(c){
   }catch(e){ return c; }
 }
 function loadPropSheet(){
+  // ps/props_ps.png：每格已离线抠底/裁紧/预缩小到 PROP_H，这里 1:1 切格
   var img = new Image();
   img.onload = function(){
-    var cw = img.naturalWidth/4, ch = img.naturalHeight/3;
+    var c = document.createElement('canvas'); c.width=img.naturalWidth; c.height=img.naturalHeight;
+    c.getContext('2d').drawImage(img,0,0);
     var names = ['bench','lamp','flower','tree','stall','coffee','news','vend','hydrant','bike','bus','trash'];
-    var i = 0;
-    names.forEach(function(name){
-      var c0 = i%4, r0 = Math.floor(i/4); i++;
-      var spr = trimCanvas(cropSprite(img, [Math.round(c0*cw)+8, Math.round(r0*ch)+8, Math.round(cw)-16, Math.round(ch)-16]));
-      PROPIMG[name] = prescaleTo(spr, PROP_H[name] || 24);
+    var rects = [
+      [0,32],[34,11],[47,21],[70,18],[90,37],[129,13],[144,42],[188,22],[212,11],[225,35],[262,33],[297,15]
+    ];
+    names.forEach(function(name, i){
+      var x = rects[i][0], w = rects[i][1], h = PROP_H[name] || 24;
+      var cc = document.createElement('canvas'); cc.width=w; cc.height=h;
+      cc.getContext('2d').drawImage(img, x, 0, w, h, 0, 0, w, h);
+      PROPIMG[name] = cc;
     });
   };
-  img.src = 'props_sheet.png';
+  img.src = 'ps/props_ps.png';
 }
 function loadPoses(){
   ['m','f'].forEach(function(k){
@@ -2520,7 +2525,7 @@ function loadOfficeImg(){
     c.getContext('2d').drawImage(img,0,0);
     OFFICEIMG.cvs = trimCanvas(c); OFFICEIMG.ready = true;
   };
-  img.src = 'office_new.png';
+  img.src = 'ps/officebld_ps.png';
 }
 function poseSpr(k, nm){ return POSESPR[k] ? POSESPR[k][nm] : null; }
 function prescaleTo(c, targetH){
@@ -2539,19 +2544,15 @@ function loadSkyGen(){
   var img = new Image();
   img.onload = function(){
     try{
-      // 天空整体下移：只取图片中低空带（58%）并切掉底部水面深色边，
-      // 让太阳/明亮地平线正好压在地面线上（y=178），天空与街道无缝相接
+      // ps/sky_ps.png 已离线完成裁切与预缩小(480x178)，这里直接 1:1 使用
       var c = document.createElement('canvas'); c.width=480; c.height=178;
       var g = c.getContext('2d');
-      g.imageSmoothingEnabled = true; g.imageSmoothingQuality='high';
-      var iw = img.naturalWidth, ih = img.naturalHeight;
-      var srcH = Math.round(ih * 0.58);
-      var srcY = ih - Math.round(ih * 0.025) - srcH;
-      g.drawImage(img, 0, srcY, iw, srcH, 0, 0, 480, 178);
+      g.imageSmoothingEnabled = false;
+      g.drawImage(img, 0, 0);
       SKYGEN.cv = c; SKYGEN.ready = true;
     }catch(e){}
   };
-  img.src = 'sky_gen.png';
+  img.src = 'ps/sky_ps.png';
 }
 
 var FARBLDG = { ready:false, cv:null, items:[] };
@@ -2603,8 +2604,8 @@ function getFarRow(){
 }
 
 var SHOPIMG = { ready:false, cv:null, items:[] };
-// shops_sheet.png (2172x724, 透明底) 内 4 家小店的裁切框，底线统一在 y=582
-var SHOP_SEGS = [ [14,161,506,422],[549,161,513,422],[1097,177,525,406],[1647,162,509,421] ];
+// ps/shops_ps.png：4 家小店已预缩小到 54px 高
+var SHOP_SEGS = [ [0,0,65,54],[67,0,66,54],[135,0,70,54],[207,0,65,54] ];
 function loadShops(){
   var img = new Image();
   img.onload = function(){
@@ -2619,7 +2620,7 @@ function loadShops(){
       SHOPIMG.ready = true;
     }catch(e){}
   };
-  img.src = 'shops_sheet.png';
+  img.src = 'ps/shops_ps.png';
 }
 
 /* ---------------- ChatGPT 生成素材：标题主视觉 / 公寓俯视房间 / 公寓外观 ---------------- */
@@ -2637,7 +2638,7 @@ function loadTitleBg(){
       TITLEBG.cv = c; TITLEBG.ready = true;
     }catch(e){}
   };
-  img.src = 'title_bg.png';
+  img.src = 'ps/title_ps.png';
 }
 var ROOMBG = { ready:false, cv:null };
 function loadRoomBg(){
@@ -2653,7 +2654,7 @@ function loadRoomBg(){
       ROOMBG.cv = c; ROOMBG.ready = true;
     }catch(e){}
   };
-  img.src = 'room_bg.png';
+  img.src = 'ps/room_ps.png';
 }
 var HOMEIMG = { ready:false, cvs:null };
 function loadHomeImg(){
@@ -2663,21 +2664,25 @@ function loadHomeImg(){
     c.getContext('2d').drawImage(img,0,0);
     HOMEIMG.cvs = trimCanvas(c); HOMEIMG.ready = true;
   };
-  img.src = 'home_new.png';
+  img.src = 'ps/home_ps.png';
 }
 
 /* ---------------- ChatGPT 生成素材：NPC（交警/大妈/朋友） ---------------- */
 var NPCIMG = { cop:null, auntie:null, friend:null };
 function loadNPCs(){
+  // ps/npcs_ps.png：已离线抠底/裁紧/预缩小，这里 1:1 切格
   var img = new Image();
   img.onload = function(){
-    var cuts = [[4,486,'cop'],[486,970,'auntie'],[970,1444,'friend']];
-    cuts.forEach(function(c){
-      var spr = trimCanvas(cropSprite(img, [c[0], 6, c[1]-c[0], img.naturalHeight-12]));
-      NPCIMG[c[2]] = prescaleTo(spr, c[2]==='cop' ? 44 : 40);
+    var c = document.createElement('canvas'); c.width=img.naturalWidth; c.height=img.naturalHeight;
+    c.getContext('2d').drawImage(img,0,0);
+    var defs = [['cop',0,20,44],['auntie',22,23,40],['friend',47,21,40]];
+    defs.forEach(function(d){
+      var cc = document.createElement('canvas'); cc.width=d[2]; cc.height=d[3];
+      cc.getContext('2d').drawImage(img, d[1], 0, d[2], d[3], 0, 0, d[2], d[3]);
+      NPCIMG[d[0]] = cc;
     });
   };
-  img.src = 'npcs.png';
+  img.src = 'ps/npcs_ps.png';
 }
 
 /* ---------------- 第一章街景背景（ChatGPT 生成图） ---------------- */
@@ -3461,19 +3466,19 @@ function drawTopChar(x, y, dir, moving, step, h){
   return true;
 }
 
-// 起床帧表：6 帧纯人物。第 5 位为绘制高度(与最高站立帧等比缩放)；男生表已重新生成(短发/衬衫领带/长裤)
+// 起床帧表：第 5 位为帧高；素材已在 ps/ 中预缩小到绘制尺寸，运行时 1:1 贴图
 var WAKEFR = { ready:false, cv:null, frames:[
-  [54,360,214,347,37],[285,307,231,400,42],[516,274,264,433,46],
-  [799,297,184,410,44],[1045,297,163,410,44],[1272,297,206,410,44] ] };
+  [0,0,23,37,37],[25,0,24,42,42],[51,0,28,46,46],
+  [81,0,20,44,44],[103,0,17,44,44],[122,0,22,44,44] ] };
 var WAKEFR_F = { ready:false, cv:null, frames:[
-  [64,182,286,483,37],[395,94,325,571,44],[728,72,354,593,46],
-  [1090,105,302,560,43],[1471,115,272,550,43],[1814,121,283,544,42] ] };
-var BEDSPR = { ready:false, cv:null };      // 床+熟睡的人·男生(整图已抠底,四张床同一裁切框完全对齐)
+  [0,0,22,37,37],[24,0,25,44,44],[51,0,27,46,46],
+  [80,0,23,43,43],[105,0,21,43,43],[128,0,22,42,42] ] };
+var BEDSPR = { ready:false, cv:null };      // 床+熟睡的人·男生(已预缩小到 BED_RECT 尺寸)
 var BEDSPR_F = { ready:false, cv:null };    // 床+熟睡的女生
 var BEDEMPTY = { ready:false, cv:null };    // 凌乱空床·男生版
 var BEDEMPTY_F = { ready:false, cv:null };  // 凌乱空床·女生版
-var DOORSPR = { ready:false, cv:null, r:[242,157,604,1172] };
-var CLOCKSPR = { ready:false, cv:null, r:[297,250,660,740] };
+var DOORSPR = { ready:false, cv:null, r:[0,0,51,76] };
+var CLOCKSPR = { ready:false, cv:null, r:[0,0,24,24] };
 var NIGHTSTAND = { ready:false, cv:null };
 function bedSprByGender(){
   var f = BEDSPR_F;
@@ -3491,10 +3496,10 @@ function wakeByGender(){
   return WAKEFR;   // 同上
 }
 function loadIntroSprites(){
-  [ ['bed_sleep.png','bed'], ['bed_sleep_f.png','bedF'],
-    ['bed_empty.png','bedE'], ['bed_empty_f.png','bedEF'],
-    ['wake_frames.png','wake'], ['wake_frames_f.png','wakeF'],
-    ['door_open.png','door'], ['clock.png','clock'], ['nightstand.png','ns'] ]
+  [ ['ps/bed_sleep_ps.png','bed'], ['ps/bed_sleep_f_ps.png','bedF'],
+    ['ps/bed_empty_ps.png','bedE'], ['ps/bed_empty_f_ps.png','bedEF'],
+    ['ps/wake_m_ps.png','wake'], ['ps/wake_f_ps.png','wakeF'],
+    ['ps/door_ps.png','door'], ['ps/clock_ps.png','clock'], ['ps/nightstand_ps.png','ns'] ]
   .forEach(function(def){
     var img = new Image();
     img.onload = function(){
@@ -3537,22 +3542,20 @@ function drawWakeFrame(fi, x, yFeet, h){
   return true;
 }
 
-/* ---------------- 第二章角色素材：领导(4向2帧) / 同事(6变体2帧) / 主角工位(4帧) / 睡猫 ---------------- */
+/* ---------------- 第二章角色素材：预缩小条(每格已缩到绘制高度, 1:1 贴图) ---------------- */
 var LEADSPR = { ready:false, cv:null, cells:[
-  [150,50,228,361],[510,50,223,361],      // 面向镜头(往下走)
-  [154,462,223,378],[509,462,218,378],    // 背对镜头(往上走)
-  [170,889,208,441],[521,889,210,441],    // 朝左
-  [154,1330,210,360],[517,1330,199,360] ] }; // 朝右
+  [0,0,19,30],[21,0,19,30],[42,0,18,30],[62,0,17,30],
+  [81,0,14,30],[97,0,14,30],[113,0,18,30],[133,0,17,30] ] };
 var COLSPR = { ready:false, cv:null, cells:[
-  [37,240,142,264],[214,240,142,264],[401,247,142,257],[543,243,176,260],
-  [759,241,141,263],[934,243,141,261],[1115,247,140,257],[1288,246,142,258],
-  [1466,244,141,260],[1641,243,142,261],[1825,241,141,263],[2000,242,141,262] ] };
+  [0,0,14,26],[16,0,14,26],[32,0,14,26],[48,0,18,26],
+  [68,0,14,26],[84,0,14,26],[100,0,14,26],[116,0,14,26],
+  [132,0,14,26],[148,0,14,26],[164,0,14,26],[180,0,14,26] ] };
 var DESKSPR = { ready:false, cv:null, cells:[
-  [124,120,300,538],[653,129,314,529],[1194,213,305,445],[1753,124,279,531] ] };
-var CATSPR = { ready:false, cv:null, r:[200,316,887,655] };
+  [0,0,15,27],[17,0,16,27],[35,0,19,27],[56,0,14,27] ] };
+var CATSPR = { ready:false, cv:null, r:[0,0,18,13] };
 function loadChar2(){
-  [ ['leader2.png','leader'], ['colleagues2.png','col'],
-    ['desk_acts.png','desk'], ['cat_sleep.png','cat'] ]
+  [ ['ps/leader_ps.png','leader'], ['ps/col_ps.png','col'],
+    ['ps/desk_ps.png','desk'], ['ps/cat_ps.png','cat'] ]
   .forEach(function(def){
     var img = new Image();
     img.onload = function(){
@@ -3679,17 +3682,17 @@ function renderIntro(){
 var BONUS = null;
 var BONUS_IMG = [];
 var BONUS_SCENES = [
-  { img:['bonus_1m.png','bonus_1f.png'],
+  { img:['ps/bonus_ps_1m.png','ps/bonus_ps_1f.png'],
     lines:[ ['你','打卡机在门口嗡嗡作响。你盯着它看了三秒,然后……转身走了。'],
             ['你','公园的长椅被太阳晒得暖暖的。刚坐下五秒,意识就开始融化。'],
             ['我','就五分钟……就睡五分钟……'] ] },
-  { img:['bonus_2m.png','bonus_2f.png'],
+  { img:['ps/bonus_ps_2m.png','ps/bonus_ps_2f.png'],
     lines:[ ['你','不知道是谁,把你扶上了旋转木马。木马一摇一摇,像小时候的摇篮。'],
             ['我','老板的脸……越来越远……越来越小……'] ] },
-  { img:['bonus_3m.png','bonus_3f.png'],
+  { img:['ps/bonus_ps_3m.png','ps/bonus_ps_3f.png'],
     lines:[ ['你','风里有青草和花的味道。云在头顶慢慢排队走过。'],
             ['我','明天的事……就让明天的我去操心吧。'] ] },
-  { img:['bonus_4m.png','bonus_4f.png'],
+  { img:['ps/bonus_ps_4m.png','ps/bonus_ps_4f.png'],
     lines:[ ['你','太阳落山,月亮上班。这一次,终于没有人打扰你。'],
             ['我','晚安,打工人。'] ] }
 ];
