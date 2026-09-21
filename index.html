@@ -244,17 +244,22 @@ window.onerror = function(msg, src, line){
 };
 
 /* ---------------- 素材加载进度：全部就绪前不允许出发（在线首访防"素材陆续弹出"） ---------------- */
-var ASSETS = { total:0, loaded:0, ready:false };
+var ASSETS = { total:0, loaded:0, ready:false, _last:-1, _lastT:Date.now() };
 (function(){
   var _Img = window.Image;
   window.Image = function(w,h){
     var img = new _Img(w,h);
     ASSETS.total++;
     img.addEventListener('load', done); img.addEventListener('error', done);
-    function done(){ if(!img._ac){ img._ac = 1; ASSETS.loaded++; if(ASSETS.loaded>=ASSETS.total) ASSETS.ready = true; } }
+    function done(){ if(!img._ac){ img._ac = 1; ASSETS.loaded++; ASSETS._lastT = Date.now(); if(ASSETS.loaded>=ASSETS.total) ASSETS.ready = true; } }
     return img;
   };
-  setTimeout(function(){ ASSETS.ready = true; }, 25000);   // 个别图片卡住时兜底放行（游戏有程序绘制兜底）
+  // 停滞检测：进度连续 10 秒不动视为卡住，兜底放行（游戏有程序绘制兜底）；只要还在下载就耐心等
+  setInterval(function(){
+    if(ASSETS.ready) return;
+    if(ASSETS.loaded !== ASSETS._last){ ASSETS._last = ASSETS.loaded; ASSETS._lastT = Date.now(); }
+    else if(Date.now() - ASSETS._lastT > 10000){ ASSETS.ready = true; }
+  }, 1000);
 })();
 
 /* ================================================================
