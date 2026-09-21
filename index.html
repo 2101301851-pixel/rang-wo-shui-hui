@@ -86,6 +86,7 @@
     border:.14em solid #f5eeda22; }
   .story b { color:#f2cf8a; }
   .controls { margin-top:1.1em; font-size:.68em; color:#bdb2d8; letter-spacing:.12em; }
+  #loadLine { margin-top:.9em; font-size:.66em; color:#f2cf8a; letter-spacing:.18em; min-height:1em; }
   kbd { background:#3a3054; border:1px solid #5c4f80; border-bottom-width:3px; border-radius:.3em;
     padding:.1em .5em; font-family:inherit; color:#fdf6e3; margin:0 .15em; }
   .btn { margin-top:1.4em; pointer-events:auto; cursor:pointer; border:none;
@@ -182,6 +183,7 @@
         <kbd>空格</kbd> 互动（坐下 / 闯红灯） &nbsp;·&nbsp;
         <kbd>Esc</kbd> 暂停 &nbsp;·&nbsp; <kbd>M</kbd> 静音
       </div>
+      <div id="loadLine"></div>
       <div class="lvBtns">
         <button class="btn" id="btnStart">第一章 · 上班路</button>
         <button class="btn ghost" id="btnLevel2">第二章 · 格子间</button>
@@ -240,6 +242,20 @@ window.onerror = function(msg, src, line){
   d.style.display = 'block';
   d.textContent = '错误: ' + msg + ' @' + line;
 };
+
+/* ---------------- 素材加载进度：全部就绪前不允许出发（在线首访防"素材陆续弹出"） ---------------- */
+var ASSETS = { total:0, loaded:0, ready:false };
+(function(){
+  var _Img = window.Image;
+  window.Image = function(w,h){
+    var img = new _Img(w,h);
+    ASSETS.total++;
+    img.addEventListener('load', done); img.addEventListener('error', done);
+    function done(){ if(!img._ac){ img._ac = 1; ASSETS.loaded++; if(ASSETS.loaded>=ASSETS.total) ASSETS.ready = true; } }
+    return img;
+  };
+  setTimeout(function(){ ASSETS.ready = true; }, 25000);   // 个别图片卡住时兜底放行（游戏有程序绘制兜底）
+})();
 
 /* ================================================================
    让我睡会 · Level 1 —— 半梦半醒上班路
@@ -681,6 +697,10 @@ document.getElementById('btnBonus').addEventListener('click', function(e){ e.sto
 var pendingLevel = 1;
 var ovSelect = document.getElementById('overlaySelect');
 function openSelect(level){
+  if(!ASSETS.ready){
+    showHint('素材还在加载中（'+ASSETS.loaded+' / '+ASSETS.total+'）—— 马上就好，稍等一下 ☾', 2.5);
+    return;
+  }
   pendingLevel = level;
   document.getElementById('selChapter').textContent = '（即将进入：第' + (level===1?'一':'二') + '章）';
   ovTitle.classList.add('hidden');
@@ -2224,7 +2244,12 @@ var LEADER_TXT = {
   scold:    ['正在被训话……', '#ff8d8d']
 };
 var lastScoreShown = -1;
+var loadLineEl = document.getElementById('loadLine');
 function syncHUD(){
+  if(loadLineEl){
+    if(ASSETS.ready){ if(loadLineEl.style.display!=='none') loadLineEl.style.display='none'; }
+    else { loadLineEl.style.display=''; loadLineEl.textContent = '素材加载中 ' + ASSETS.loaded + ' / ' + ASSETS.total + ' …'; }
+  }
   var playing = (G.state==='play' || G.state==='pause' || G.state==='failing' || G.state==='clearing');
   for(var i=0;i<el.hudPlay.length;i++){
     if(el.hudPlay[i].id==='muteBtn') continue;
