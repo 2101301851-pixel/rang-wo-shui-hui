@@ -2354,7 +2354,7 @@ function loadOfficeBg2(){
       L2BG.cvs = c; L2BG.ready = true;
     }catch(e){}
   };
-  img.src = 'ps/office3_ps.png';
+  img.src = 'ps/office3_ps.webp';
 }
 
 /* ---------------- 角色精灵（设定图裁切） ---------------- */
@@ -2366,11 +2366,11 @@ try{
 var CHARSHEETS = { m:{img:null}, f:{img:null} };
 var CHSPR = {};    // 裁切缓存：CHSPR['m_animal_w0'] = canvas
 var SHEET_DEF = {
-  m: { src:'char_m.png',
+  m: { src:'char_m.webp',
     rows:{ down:66, up:173, left:276, right:414 },
     colX0:246, colPitch:85, colW:82, colH:96,
     poses:{ happy:[1150,80,105,160], tired:[918,308,85,162], phone:[1028,318,88,152], big:[28,118,246,374] } },
-  f: { src:'char_f.png',
+  f: { src:'char_f.webp',
     rows:{ down:66, up:173, left:276, right:414 },
     colX0:246, colPitch:85, colW:82, colH:96,
     poses:{ happy:[1150,80,105,160], tired:[918,308,85,162], phone:[1028,318,88,152], big:[28,118,246,374] } }
@@ -2478,11 +2478,11 @@ function spritesReady(){ return !!CHSPR[CHAR_SEL.c]; }
 /* ---------------- 行走精灵表（帧坐标为预校准静态表，兼容 file:// 直接打开，无需运行时读像素） ---------------- */
 var WALKSHEETS = { m:{ready:false}, f:{ready:false} };
 var WALKFRAMES = {
-  m: { src:'walk_m2.png', rows:{ right:{
+  m: { src:'walk_m2.webp', rows:{ right:{
     baseW:1551, baseH:386, baseY1:850,
     frames:[[119,43,223,385,115.5],[560,43,226,386,115.2],[1003,43,225,385,114.2],[1447,43,220,385,114.1],
             [120,471,222,379,114.2],[562,468,219,382,114],[1000,468,224,382,116.3],[1443,468,228,381,115.2]] } } },
-  f: { src:'walk_new.png', rows:{ right:{
+  f: { src:'walk_new.webp', rows:{ right:{
     baseW:1567, baseH:387, baseY1:857,
     frames:[[98,46,241,384,134.9],[529,53,243,377,133],[968,44,250,386,137.8],[1419,43,239,387,131.8],
             [83,487,248,370,136.2],[528,484,241,373,134.4],[972,480,246,377,134],[1410,475,240,382,133]] } } }
@@ -2531,7 +2531,7 @@ function loadPropSheet(){
       PROPIMG[name] = cc;
     });
   };
-  img.src = 'ps/props_ps.png';
+  img.src = 'ps/props_ps.webp';
 }
 function loadPoses(){
   ['m','f'].forEach(function(k){
@@ -2545,7 +2545,7 @@ function loadPoses(){
         POSESPR[k][nm] = trimCanvas(spr);
       });
     };
-    img.src = (k==='m') ? 'poses_m.png' : 'poses_f.png';
+    img.src = (k==='m') ? 'poses_m.webp' : 'poses_f.webp';
   });
 }
 function loadOfficeImg(){
@@ -2555,7 +2555,7 @@ function loadOfficeImg(){
     c.getContext('2d').drawImage(img,0,0);
     OFFICEIMG.cvs = trimCanvas(c); OFFICEIMG.ready = true;
   };
-  img.src = 'ps/officebld_ps.png';
+  img.src = 'ps/officebld_ps.webp';
 }
 function poseSpr(k, nm){ return POSESPR[k] ? POSESPR[k][nm] : null; }
 function prescaleTo(c, targetH){
@@ -2582,7 +2582,7 @@ function loadSkyGen(){
       SKYGEN.cv = c; SKYGEN.ready = true;
     }catch(e){}
   };
-  img.src = 'ps/sky_ps.png';
+  img.src = 'ps/sky_ps.webp';
 }
 
 var FARBLDG = { ready:false, cv:null, items:[] };
@@ -2605,7 +2605,7 @@ function loadFarBuildings(){
       FARBLDG.ready = true;
     }catch(e){}
   };
-  img.src = 'buildings_far.png';
+  img.src = 'buildings_far.webp';
 }
 // 远景建筑沿世界排布（种子固定，只生成一次）：视差 0.3x，楼底沉到人行道后
 var FAR_FAC = 0.3, FAR_BASE_Y = 184, farRow = null;
@@ -2650,7 +2650,7 @@ function loadShops(){
       SHOPIMG.ready = true;
     }catch(e){}
   };
-  img.src = 'ps/shops_ps.png';
+  img.src = 'ps/shops_ps.webp';
 }
 
 /* ---------------- ChatGPT 生成素材：标题主视觉 / 公寓俯视房间 / 公寓外观 ---------------- */
@@ -2668,7 +2668,7 @@ function loadTitleBg(){
       TITLEBG.cv = c; TITLEBG.ready = true;
     }catch(e){}
   };
-  img.src = 'ps/title_ps.png';
+  img.src = 'ps/title_ps.webp';
 }
 var ROOMBG = { ready:false, cv:null };
 function loadRoomBg(){
@@ -2684,7 +2684,7 @@ function loadRoomBg(){
       ROOMBG.cv = c; ROOMBG.ready = true;
     }catch(e){}
   };
-  img.src = 'ps/room_ps.png';
+  img.src = 'ps/room_ps.webp';
 }
 var HOMEIMG = { ready:false, cvs:null };
 function loadHomeImg(){
@@ -2694,7 +2694,7 @@ function loadHomeImg(){
     c.getContext('2d').drawImage(img,0,0);
     HOMEIMG.cvs = trimCanvas(c); HOMEIMG.ready = true;
   };
-  img.src = 'ps/home_ps.png';
+  img.src = 'ps/home_ps.webp';
 }
 
 /* ---------------- ChatGPT 生成素材：NPC（交警/大妈/朋友） ---------------- */
@@ -2712,7 +2712,7 @@ function loadNPCs(){
       NPCIMG[d[0]] = cc;
     });
   };
-  img.src = 'ps/npcs_ps.png';
+  img.src = 'ps/npcs_ps.webp';
 }
 
 /* ---------------- 第一章街景背景（ChatGPT 生成图） ---------------- */
@@ -2740,7 +2740,7 @@ function loadL1BG(){
       L1BG.ready = true;
     }catch(e){}
   };
-  img.src = 'scene_bg.png';
+  img.src = 'scene_bg.webp';
 }
 
 function resetRun2(){
@@ -3526,10 +3526,10 @@ function wakeByGender(){
   return WAKEFR;   // 同上
 }
 function loadIntroSprites(){
-  [ ['ps/bed_sleep_ps.png','bed'], ['ps/bed_sleep_f_ps.png','bedF'],
-    ['ps/bed_empty_ps.png','bedE'], ['ps/bed_empty_f_ps.png','bedEF'],
-    ['ps/wake_m_ps.png','wake'], ['ps/wake_f_ps.png','wakeF'],
-    ['ps/door_ps.png','door'], ['ps/clock_ps.png','clock'], ['ps/nightstand_ps.png','ns'] ]
+  [ ['ps/bed_sleep_ps.webp','bed'], ['ps/bed_sleep_f_ps.webp','bedF'],
+    ['ps/bed_empty_ps.webp','bedE'], ['ps/bed_empty_f_ps.webp','bedEF'],
+    ['ps/wake_m_ps.webp','wake'], ['ps/wake_f_ps.webp','wakeF'],
+    ['ps/door_ps.webp','door'], ['ps/clock_ps.webp','clock'], ['ps/nightstand_ps.webp','ns'] ]
   .forEach(function(def){
     var img = new Image();
     img.onload = function(){
@@ -3584,8 +3584,8 @@ var DESKSPR = { ready:false, cv:null, cells:[
   [0,0,15,27],[17,0,16,27],[35,0,19,27],[56,0,14,27] ] };
 var CATSPR = { ready:false, cv:null, r:[0,0,18,13] };
 function loadChar2(){
-  [ ['ps/leader_ps.png','leader'], ['ps/col_ps.png','col'],
-    ['ps/desk_ps.png','desk'], ['ps/cat_ps.png','cat'] ]
+  [ ['ps/leader_ps.webp','leader'], ['ps/col_ps.webp','col'],
+    ['ps/desk_ps.webp','desk'], ['ps/cat_ps.webp','cat'] ]
   .forEach(function(def){
     var img = new Image();
     img.onload = function(){
@@ -3712,17 +3712,17 @@ function renderIntro(){
 var BONUS = null;
 var BONUS_IMG = [];
 var BONUS_SCENES = [
-  { img:['ps/bonus_ps_1m.png','ps/bonus_ps_1f.png'],
+  { img:['ps/bonus_ps_1m.webp','ps/bonus_ps_1f.webp'],
     lines:[ ['你','打卡机在门口嗡嗡作响。你盯着它看了三秒,然后……转身走了。'],
             ['你','公园的长椅被太阳晒得暖暖的。刚坐下五秒,意识就开始融化。'],
             ['我','就五分钟……就睡五分钟……'] ] },
-  { img:['ps/bonus_ps_2m.png','ps/bonus_ps_2f.png'],
+  { img:['ps/bonus_ps_2m.webp','ps/bonus_ps_2f.webp'],
     lines:[ ['你','不知道是谁,把你扶上了旋转木马。木马一摇一摇,像小时候的摇篮。'],
             ['我','老板的脸……越来越远……越来越小……'] ] },
-  { img:['ps/bonus_ps_3m.png','ps/bonus_ps_3f.png'],
+  { img:['ps/bonus_ps_3m.webp','ps/bonus_ps_3f.webp'],
     lines:[ ['你','风里有青草和花的味道。云在头顶慢慢排队走过。'],
             ['我','明天的事……就让明天的我去操心吧。'] ] },
-  { img:['ps/bonus_ps_4m.png','ps/bonus_ps_4f.png'],
+  { img:['ps/bonus_ps_4m.webp','ps/bonus_ps_4f.webp'],
     lines:[ ['你','太阳落山,月亮上班。这一次,终于没有人打扰你。'],
             ['我','晚安,打工人。'] ] }
 ];
